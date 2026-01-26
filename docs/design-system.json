@@ -1,0 +1,244 @@
+{
+  "meta": {
+    "name": "Mibu Minimal Budgeting - Design System",
+    "version": "1.0",
+    "createdBy": "ChatGPT (Creative Director spec)",
+    "description": "High-level design system and tokens to reproduce a minimal monochrome iOS-style budgeting UI. Use as instructions for AI-driven replication and component implementation."
+  },
+
+  "principles": {
+    "visual": [
+      "Minimal — reduce visual noise to highlight content (numbers, labels, micro-interactions).",
+      "Monochrome clarity — black, white, and soft greys; rely on scale, weight and space to create hierarchy.",
+      "Friendly line-art — human illustration style on splash screens to add warmth without color.",
+      "Large numeric emphasis — balances and primary values are bold and oversized to be quickly scanned.",
+      "Generous touch targets — mobile-first; keep interactive elements >= 44px." 
+    ],
+    "interaction": [
+      "Subtle motion — smooth, short transitions for graphs and pill selection; avoid heavy micro-animations.",
+      "Context first — show the primary data (balance) at top, contextual controls in small, light UI.",
+      "Affordance through shape — use rounded pills and circles to indicate tappable items.",
+      "Accessible contrast — ensure black-on-white values meet AA; use darker greys for secondary text."
+    ]
+  },
+
+  "tokens": {
+    "color": {
+      "background": "#FFFFFF",
+      "foreground": "#000000",
+      "muted": "#8A8A8F",
+      "subtleLine": "#E9E9E9",
+      "softShadow": "rgba(0,0,0,0.06)",
+      "paleSurface": "#F7F7F8",
+      "pillFill": "#000000",
+      "pillTextOnDark": "#FFFFFF"
+    },
+
+    "typography": {
+      "fontFamily": "-apple-system, 'SF Pro Text', 'Inter', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif",
+      "scale": {
+        "xs": 12,
+        "sm": 14,
+        "md": 16,
+        "lg": 20,
+        "xl": 32,
+        "xxl": 48,
+        "display": 72
+      },
+      "weights": {
+        "regular": 400,
+        "medium": 500,
+        "semibold": 600,
+        "bold": 700,
+        "black": 800
+      },
+      "leading": {
+        "default": 1.3,
+        "tight": 1.05,
+        "relaxed": 1.5
+      }
+    },
+
+    "spacing": {
+      "base": 8,
+      "xs": 4,
+      "sm": 8,
+      "md": 16,
+      "lg": 24,
+      "xl": 32,
+      "safeMargin": 16
+    },
+
+    "radii": {
+      "none": 0,
+      "sm": 6,
+      "md": 12,
+      "pill": 9999,
+      "circle": "50%"
+    },
+
+    "elevation": {
+      "none": "none",
+      "subtle": "0 6px 18px rgba(0,0,0,0.06)",
+      "softInset": "inset 0 1px 0 rgba(255,255,255,0.02)"
+    },
+
+    "stroke": {
+      "icon": 2,
+      "graph": 3,
+      "divider": 1
+    }
+  },
+
+  "layout": {
+    "grid": {
+      "columnWidth": 360,
+      "gutter": 16,
+      "columns": 1,
+      "baseline": 8
+    },
+    "margins": {
+      "screenHorizontal": 20,
+      "screenTopSafe": 18,
+      "screenBottomSafe": 18
+    }
+  },
+
+  "components": {
+    "AppShell": {
+      "anatomy": ["statusBar (system)", "topControls", "contentArea", "bottomNav"],
+      "notes": "Full-screen mobile shell. Keep large white margins and a centered vertical rhythm."
+    },
+
+    "SplashOnboarding": {
+      "description": "Minimal onboarding / splash with line-art portrait and category pills",
+      "anatomy": ["illustration (center)", "categoryPills (surrounding) ", "appWordmark", "supportingTagline"],
+      "illustrationStyle": "single-stroke hand-drawn portrait; export as SVG; stroke ~2px; fill none; keep margin around illustration.",
+      "categoryPills": {
+        "shape": "pill",
+        "height": 32,
+        "padding": "0 12px",
+        "fontSize": "sm",
+        "background": "transparent",
+        "border": "1px solid var(--subtleLine)",
+        "radius": "pill"
+      }
+    },
+
+    "Pill": {
+      "usage": "Small context toggles (income, expenses, categories).",
+      "dimensions": {"minWidth": 56, "height": 32},
+      "typography": {"size": "sm", "weight": "medium"},
+      "states": {
+        "default": {"bg":"transparent","border":"1px solid var(--subtleLine)","text":"var(--foreground)"},
+        "selected": {"bg":"var(--pillFill)","text":"var(--pillTextOnDark)"},
+        "disabled": {"text":"var(--muted)","border":"1px dashed var(--subtleLine)"}
+      }
+    },
+
+    "TopControls": {
+      "elements": ["periodSelector (small pill)", "searchIcon"],
+      "periodSelector": {"shape":"pill","fontSize":"sm","height":32},
+      "alignment": "centered horizontally above content"
+    },
+
+    "BalanceDisplay": {
+      "anatomy": ["periodPill","balanceValue","lineGraphPreview","monthLabels"],
+      "balanceValue": {"fontSize":"xl","weight":"black","leading":"tight","decimalTreatment":"smaller, same line, opacity 0.9"},
+      "graph": {"type":"line","strokeWidth": 3, "cap":"round","lineJoin":"round","height": 120, "interactivePointRadius": 8},
+      "labels": {"fontSize":"sm","color":"var(--muted)","spacingTop": 8}
+    },
+
+    "TransactionList": {
+      "anatomy": ["sectionHeader","listItem*","divider"],
+      "listItem": {
+        "left": "avatar (32px) or emoji",
+        "middle": {"title":"md bold","subtitle":"sm muted"},
+        "right": {"amount":"md semibold or bold","amountColor":"foreground for income, muted/dark red for expense"},
+        "spacing": {"vertical": 12, "betweenColumns": 12}
+      },
+      "divider": "1px solid var(--subtleLine) full-width with 12px inset"
+    },
+
+    "DateCarousel": {
+      "description": "Horizontal date scroller with selected day as black rounded square/circle",
+      "itemSize": 44,
+      "selected": {"bg":"var(--pillFill)","text":"var(--pillTextOnDark)","radius": 12},
+      "unselectedText": "muted",
+      "spacing": 8
+    },
+
+    "AmountEntry": {
+      "anatomy": ["topToggle (expenses/income)", "dateCarousel","amountDisplay","merchantPill","numericPad","confirm"],
+      "amountDisplay": {"fontSize":"xxl","weight":"black","align":"center","marginTop": 12},
+      "merchantPill": {"shape":"pill","height":28,"fontSize":"sm","padding":"0 10px"},
+      "numericPad": {
+        "layout":"3x4 grid",
+        "buttonSize": 76,
+        "buttonShape":"circle",
+        "typography":{"size":"xl","weight":"semibold"},
+        "background":"paleSurface",
+        "pressState":"slightly darker background and micro-shadow"
+      }
+    },
+
+    "BottomNav": {
+      "anatomy": ["leftIcon","centerAction","rightIcon"],
+      "centerAction": {"shape":"circle","size":56,"bg":"foreground","iconColor":"background","elevation":"subtle"},
+      "icons": {"stroke":2, "size":20, "padding":12}
+    },
+
+    "Icons": {
+      "style": "outline, single weight (2px), simplified shapes. Provide monochrome SVGs with 2px stroke. Avoid filled icons except for center call-to-action which can be solid.",
+      "systemSet": ["home","chart","plus","settings","search","wallet"]
+    }
+  },
+
+  "patterns": {
+    "spacingRhythm": "Use base spacing of 8px. Major sections spaced by multiples of 16px. Top/bottom safe margins 16-20px.",
+    "hierarchy": "Large numeric (balance) > chart preview > recent transactions. Use font weight and size for immediate hierarchy rather than color.",
+    "pillsAndChips": "Use pill shapes for filters and small selections. Selected pill becomes solid black with white text; default is transparent with subtle 1px stroke.",
+    "forms": "Inputs are large, centered, and visually minimal. Numeric keypads are circular, high-contrast digits, ample spacing to avoid mis-taps."
+  },
+
+  "accessibility": {
+    "touchTargets": 44,
+    "textContrast": "Foreground text should meet at least AA contrast vs white. Secondary text can be #8A8A8F or darker.",
+    "motion": "Allow user to reduce motion. Keep animations under 200ms.",
+    "labels": "All icons must have accessible labels and hit-area semantics for screen readers."
+  },
+
+  "assets": {
+    "illustration": {
+      "style": "single-line portrait SVG, no fills, 2px stroke",
+      "sizeGuideline": "SVG viewBox 600x600, scale to fit 45% of vertical viewport on splash"
+    },
+    "emojiFallback": "Use system emoji for avatars; provide circular background surface at 32px if no image.",
+    "icons": "SVG outline set provided at 24px canvas with 2px stroke and 2px padding. Provide 1x and 2x export for mobile."
+  },
+
+  "tokensUsageExamples": {
+    "balanceHeader": {
+      "fontSize": "xxl (48)",
+      "weight": "black (800)",
+      "color": "foreground"
+    },
+    "listItemTitle": {
+      "fontSize": "md (16)",
+      "weight": "semibold",
+      "color": "foreground"
+    },
+    "listItemSubtitle": {
+      "fontSize": "sm (14)",
+      "weight": "regular",
+      "color": "muted"
+    }
+  },
+
+  "implementationNotes": {
+    "cssVariables": "Expose tokens as CSS variables (e.g. --color-foreground, --space-md, --radius-pill).",
+    "responsive": "Keep scale proportional: use clamp() or small/large size tokens for compact vs regular phones.",
+    "svg": "Graphs should be SVG paths with stroke-linecap round and stroke-linejoin round. Interaction points are filled circles sized 8–12px.",
+    "testing": "Test tap targets on small phones; check vertical overflow when keyboard is present for amount entry."
+  }
+}
