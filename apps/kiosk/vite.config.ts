@@ -28,4 +28,12 @@ export default defineConfig({
         : {},
     }),
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    }
+  },
+  define: {
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
+  }
 })

@@ -4,7 +4,46 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <title>ghostPay Terminal</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+      :root {
+        --color-background: #FFFFFF;
+        --color-foreground: #000000;
+        --color-muted: #8A8A8F;
+        --color-subtle-line: #E9E9E9;
+        --color-pale-surface: #F7F7F8;
+      }
+
+      body {
+        font-family: 'Inter', -apple-system, system-ui, sans-serif;
+        background-color: #F0F0F2;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        color: var(--color-foreground);
+      }
+
+      /* Custom scrollbar */
+      ::-webkit-scrollbar {
+        width: 4px;
+      }
+      ::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+      }
+
+      .mibu-shadow {
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
