@@ -25,9 +25,14 @@ process.env.VITE_PUBLIC = VITE_DEV_SERVER_URL ? path.join(process.env.APP_ROOT, 
 let win: BrowserWindow | null
 
 function createWindow() {
+  const isKiosk = process.argv.includes('--kiosk') || process.env.KIOSK === 'true';
+
   win = new BrowserWindow({
     width: 320,
     height: 480,
+    kiosk: isKiosk,
+    alwaysOnTop: isKiosk,
+    frame: !isKiosk,
     resizable: false,
     title: 'ghostPay',
     icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
@@ -40,6 +45,10 @@ function createWindow() {
   win.webContents.on('did-finish-load', () => {
     win?.webContents.send('main-process-message', (new Date).toLocaleString())
   })
+
+  if (isKiosk) {
+    win.setMenu(null); // Remove menu bar
+  }
 
   if (VITE_DEV_SERVER_URL) {
     win.loadURL(VITE_DEV_SERVER_URL)
