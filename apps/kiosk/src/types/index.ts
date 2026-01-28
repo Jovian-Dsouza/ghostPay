@@ -1,4 +1,6 @@
 
+export * from './payment';
+
 export enum AppView {
   DASHBOARD = 'DASHBOARD',
   KEYPAD = 'KEYPAD',

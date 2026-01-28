@@ -31,9 +31,19 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      'buffer': 'buffer/',
     }
   },
   define: {
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY)
-  }
+    'process.env.API_KEY': JSON.stringify(process.env.API_KEY),
+    'global': 'globalThis',
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      define: {
+        global: 'globalThis',
+      },
+    },
+    include: ['buffer'],
+  },
 })
