@@ -6,12 +6,14 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build && electron-builder",
+    "postinstall": "@electron/rebuild -f -w better-sqlite3",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
   },
   "dependencies": {
     "@google/genai": "^1.38.0",
     "@radr/shadowwire": "^1.1.15",
+    "better-sqlite3": "^12.6.2",
     "buffer": "^6.0.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
@@ -19,6 +21,8 @@
     "vite-tsconfig-paths": "^6.0.5"
   },
   "devDependencies": {
+    "@electron/rebuild": "^4.0.3",
+    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^22.14.0",
     "@types/react": "npm:types-react@^19.0.0-rc.1",
     "@types/react-dom": "npm:types-react-dom@^19.0.0-rc.1",

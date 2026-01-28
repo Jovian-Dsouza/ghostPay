@@ -1,4 +1,5 @@
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
+import * as db from './database'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
@@ -76,4 +77,12 @@ app.on('activate', () => {
   }
 })
 
-app.whenReady().then(createWindow)
+app.whenReady().then(() => {
+  db.initDatabase();
+
+  ipcMain.handle('db:get-transactions', () => db.getTransactions());
+  ipcMain.handle('db:save-transaction', (_, tx) => db.saveTransaction(tx));
+  ipcMain.handle('db:delete-transaction', (_, id) => db.deleteTransaction(id));
+
+  createWindow();
+})

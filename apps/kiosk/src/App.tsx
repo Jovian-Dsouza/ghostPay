@@ -7,16 +7,11 @@ import Keypad from './components/Keypad';
 import TokenSelector from './components/TokenSelector';
 import PaymentQR from './components/PaymentQR';
 import History from './components/History';
-
-const INITIAL_TRANSACTIONS: Transaction[] = [
-  { id: '1', amount: 42.50, currency: 'USD', status: 'completed', timestamp: new Date(Date.now() - 3600000), cryptoType: 'BTC' },
-  { id: '2', amount: 15.00, currency: 'USD', status: 'completed', timestamp: new Date(Date.now() - 7200000), cryptoType: 'ETH' },
-  { id: '3', amount: 124.99, currency: 'USD', status: 'failed', timestamp: new Date(Date.now() - 86400000), cryptoType: 'SOL' },
-];
+import { useTransactions } from './hooks/useTransactions';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.DASHBOARD);
-  const [transactions, setTransactions] = useState<Transaction[]>(INITIAL_TRANSACTIONS);
+  const { transactions, addTransaction } = useTransactions();
   const [pendingAmount, setPendingAmount] = useState<number>(0);
   const [selectedToken, setSelectedToken] = useState<string>('SOL');
 
@@ -39,10 +34,10 @@ const App: React.FC = () => {
       timestamp: new Date(),
       cryptoType: selectedToken
     };
-    setTransactions(prev => [newTx, ...prev]);
+    addTransaction(newTx);
     setView(AppView.DASHBOARD);
     setPendingAmount(0);
-  }, [pendingAmount, selectedToken]);
+  }, [pendingAmount, selectedToken, addTransaction]);
 
   return (
     <div>
