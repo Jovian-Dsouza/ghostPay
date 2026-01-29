@@ -43,7 +43,9 @@ class PaymentService {
   }
 
   private generateReference(): string {
-    const bytes = new Uint8Array(32);
+    // Reduced from 256 bits (32 bytes) to 128 bits (16 bytes)
+    // Still provides sufficient uniqueness for payment tracking
+    const bytes = new Uint8Array(16);
     crypto.getRandomValues(bytes);
     return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
   }
@@ -59,8 +61,6 @@ class PaymentService {
     }
 
     params.set('label', 'ghostPay');
-    params.set('message', `Payment of ${amount} ${token}`);
-
     return `solana:${MERCHANT_WALLET}?${params.toString()}`;
   }
 
@@ -74,18 +74,6 @@ class PaymentService {
 
     const reference = this.generateReference();
     const qrData = this.generateQRData(config.amount, config.token, config.tokenMint, reference);
-
-    // Get initial balance
-    let initialBalance = 0;
-    if (this.shadowWireClient) {
-      try {
-        const poolBalance = await this.shadowWireClient.getBalance(MERCHANT_WALLET, config.token as TokenSymbol);
-        initialBalance = poolBalance.available || 0;
-      } catch (error) {
-        console.error('Failed to get initial balance:', error);
-      }
-    }
-
     this.currentSession = {
       id: crypto.randomUUID(),
       amount: config.amount,
@@ -94,13 +82,27 @@ class PaymentService {
       status: 'waiting',
       createdAt: Date.now(),
       qrData,
-      initialBalance,
+      initialBalance: 0, // Will be updated asynchronously
       reference,
     };
 
+    // Notify immediately so QR shows up without delay
     this.notifyStatusChange();
     this.startPolling();
     this.startTimeoutTimer();
+
+    // Fetch initial balance asynchronously without blocking QR display
+    if (this.shadowWireClient) {
+      this.shadowWireClient.getBalance(MERCHANT_WALLET, config.token as TokenSymbol)
+        .then(poolBalance => {
+          if (this.currentSession && this.currentSession.id === this.currentSession.id) {
+            this.currentSession.initialBalance = poolBalance.available || 0;
+          }
+        })
+        .catch(error => {
+          console.error('Failed to get initial balance:', error);
+        });
+    }
 
     return this.currentSession;
   }
