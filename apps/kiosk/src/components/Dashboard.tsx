@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { Transaction } from '../types';
+import { USD1_LOGO_URL } from '../types';
 
 interface DashboardProps {
   transactions: Transaction[];
@@ -108,8 +109,17 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions, onStartPayment }) =
             >
               <div className="flex flex-col">
                 <div className="flex items-center gap-1.5">
-                  <span className="px-1.5 py-0.5 bg-black text-white text-[9px] font-black rounded-md">{tx.cryptoType}</span>
-                  <span className="text-[13px] font-black text-black tracking-tight">Received</span>
+                  <span className="text-[11px] text-[#8A8A8F] font-semibold">Received</span>
+                  {tx.cryptoType === 'USD1' ? (
+                    <div className="flex items-center gap-1 px-1.5 py-0.5 bg-black text-white text-[9px] font-black rounded-md">
+                      <img src={USD1_LOGO_URL} alt="USD1" className="w-3 h-3 rounded-full" />
+                      <span>{tx.cryptoType}</span>
+                    </div>
+                  ) : (
+                    <span className="px-1.5 py-0.5 bg-black text-white text-[9px] font-black rounded-md">
+                      {tx.cryptoType}
+                    </span>
+                  )}
                 </div>
                 <span className="text-[11px] text-[#8A8A8F] font-medium mt-0.5">
                   {tx.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

@@ -4,7 +4,7 @@ import { AppView, Transaction } from './types';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
 import Keypad from './components/Keypad';
-import TokenSelector from './components/TokenSelector';
+// import TokenSelector from './components/TokenSelector'; // Commented out - USD1-only payment
 import PaymentQR from './components/PaymentQR';
 import History from './components/History';
 import { useTransactions } from './hooks/useTransactions';
@@ -13,17 +13,18 @@ const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.DASHBOARD);
   const { transactions, addTransaction } = useTransactions();
   const [pendingAmount, setPendingAmount] = useState<number>(0);
-  const [selectedToken, setSelectedToken] = useState<string>('SOL');
+  const [selectedToken, setSelectedToken] = useState<string>('USD1');
 
   const handleConfirmAmount = (amount: number) => {
     setPendingAmount(amount);
-    setView(AppView.TOKEN_SELECTION);
+    setSelectedToken('USD1'); // Explicitly set to USD1
+    setView(AppView.PAYMENT_QR); // Skip TOKEN_SELECTION
   };
 
-  const handleTokenSelect = (token: string) => {
-    setSelectedToken(token);
-    setView(AppView.PAYMENT_QR);
-  };
+  // const handleTokenSelect = (token: string) => {
+  //   setSelectedToken(token);
+  //   setView(AppView.PAYMENT_QR);
+  // };
 
   const handlePaymentComplete = useCallback(() => {
     const newTx: Transaction = {
@@ -54,18 +55,19 @@ const App: React.FC = () => {
             onCancel={() => setView(AppView.DASHBOARD)}
           />
         )}
-        {view === AppView.TOKEN_SELECTION && (
+        {/* TokenSelector removed - USD1-only payment */}
+        {/* view === AppView.TOKEN_SELECTION && (
           <TokenSelector
             onSelect={handleTokenSelect}
             onBack={() => setView(AppView.KEYPAD)}
           />
-        )}
+        ) */}
         {view === AppView.PAYMENT_QR && (
           <PaymentQR
             amount={pendingAmount}
             token={selectedToken}
             onComplete={handlePaymentComplete}
-            onBack={() => setView(AppView.TOKEN_SELECTION)}
+            onBack={() => setView(AppView.KEYPAD)} // Changed from TOKEN_SELECTION
           />
         )}
         {view === AppView.HISTORY && (

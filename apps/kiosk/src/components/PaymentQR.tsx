@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import QRCode from 'react-qr-code';
 import { usePayment } from '../hooks/usePayment';
-import { TOKEN_MINTS } from '../types';
+import { TOKEN_MINTS, USD1_LOGO_URL } from '../types';
 
 interface PaymentQRProps {
   amount: number;
@@ -50,7 +50,12 @@ const PaymentQR: React.FC<PaymentQRProps> = ({ amount, token, onComplete, onBack
   return (
     <div className="flex flex-col items-center justify-center h-full space-y-3 pt-2 pb-2 text-center animate-in zoom-in-95 duration-500 bg-white">
       <div className="space-y-1">
-        <p className="text-[10px] text-[#8A8A8F] font-black uppercase tracking-[0.2em]">Paying with {token}</p>
+        <div className="flex items-center justify-center gap-2">
+          <img src={USD1_LOGO_URL} alt="USD1" className="w-5 h-5 rounded-full" />
+          <p className="text-[10px] text-[#8A8A8F] font-black uppercase tracking-[0.2em]">
+            Paying with {token}
+          </p>
+        </div>
         <div className="flex flex-col items-center">
           <h2 className="text-[42px] font-black text-black leading-tight tracking-tighter">${amount.toFixed(2)}</h2>
           <div className="px-3 py-1 bg-black text-white text-[10px] font-black rounded-full uppercase tracking-widest mt-1">
@@ -124,7 +129,7 @@ const PaymentQR: React.FC<PaymentQRProps> = ({ amount, token, onComplete, onBack
           {isSuccess && 'Transaction complete. Redirecting...'}
           {isExpired && 'Payment window expired. Please try again.'}
           {isError && (session?.errorMessage || 'An error occurred. Please try again.')}
-          {(isWaiting || isVerifying) && `Transfer ${token} equivalent of $${amount.toFixed(2)} to the terminal address.`}
+          {(isWaiting || isVerifying) && `Transfer ${amount.toFixed(2)} ${token}  to the terminal address.`}
         </p>
 
         {/* Timeout countdown */}

@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { USD1_LOGO_URL } from '../types';
 
 interface KeypadProps {
   onConfirm: (amount: number) => void;
@@ -66,7 +67,7 @@ const Keypad: React.FC<KeypadProps> = ({ onConfirm, onCancel }) => {
           disabled={parseFloat(amountStr) <= 0}
           className="flex-[2] py-3 bg-black text-white text-[10px] font-black rounded-full active:scale-95 transition-all disabled:opacity-20 mibu-shadow uppercase tracking-widest"
         >
-          Select Token
+          Generate QR Code
         </button>
       </div>
     </div>
