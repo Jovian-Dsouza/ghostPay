@@ -2,16 +2,14 @@ import { USD1_LOGO_URL } from '../types';
 
 interface Props {
   balance: number;
+  onchainBalance: number;
   loading: boolean;
 }
 
-export default function BalanceCard({ balance, loading }: Props) {
+export default function BalanceCard({ balance, onchainBalance, loading }: Props) {
   return (
     <div className="text-center py-8">
-      <div className="flex items-center justify-center gap-2 mb-1">
-        <img src={USD1_LOGO_URL} alt="USD1" className="w-5 h-5 rounded-full" />
-        <span className="text-[10px] text-gray-400 font-black uppercase tracking-[0.2em]">ShadowWire Balance</span>
-      </div>
+
       <h1 className="text-5xl font-black tracking-tighter text-black">
         {loading ? (
           <span className="inline-block w-32 h-12 bg-gray-100 rounded-lg animate-pulse" />
@@ -19,7 +17,19 @@ export default function BalanceCard({ balance, loading }: Props) {
           `$${balance.toFixed(2)}`
         )}
       </h1>
-      <p className="text-xs text-gray-400 mt-1 font-medium">USD1</p>
+      <div className="flex items-center justify-center gap-2 mb-1">
+        <p className="text-sm text-gray-400 mt-1 font-medium">USD1</p>
+        <img src={USD1_LOGO_URL} alt="USD1" className="w-5 h-5 rounded-full" />
+      </div>
+
+      {!loading && (
+        <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50">
+          <div className={`w-1.5 h-1.5 rounded-full ${onchainBalance > 0 ? 'bg-emerald-400' : 'bg-gray-300'}`} />
+          <span className="text-xs font-semibold text-gray-500">
+            ${onchainBalance.toFixed(2)} on-chain
+          </span>
+        </div>
+      )}
     </div>
   );
 }

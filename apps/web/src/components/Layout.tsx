@@ -12,7 +12,7 @@ export default function Layout({ children }: { children: ReactNode }) {
       <header className="flex items-center justify-between px-4 py-3 border-b border-gray-100">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="ghostPay" className="w-10 h-10" />
-          <span className="text-lg font-black tracking-tighter text-black">ghostPay.</span>
+          <span className="text-lg font-black tracking-tighter text-black">ghostPay</span>
         </div>
         <button
           onClick={() => open({ view: 'Account' })}

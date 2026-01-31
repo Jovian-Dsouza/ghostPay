@@ -1,9 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { getBalance } from '../services/shadowWireService';
+import { getOnchainBalance } from '../services/onchainBalance';
 import { POLL_INTERVAL } from '../config/shadowwire';
+
+const ONCHAIN_POLL_INTERVAL = 30_000;
 
 export function useBalance(wallet: string | undefined) {
   const [balance, setBalance] = useState<number>(0);
+  const [onchainBalance, setOnchainBalance] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   const refresh = useCallback(async () => {
@@ -18,6 +22,16 @@ export function useBalance(wallet: string | undefined) {
     }
   }, [wallet]);
 
+  const refreshOnchain = useCallback(async () => {
+    if (!wallet) return;
+    try {
+      const onchain = await getOnchainBalance(wallet);
+      setOnchainBalance(onchain);
+    } catch {
+      // keep last known value
+    }
+  }, [wallet]);
+
   useEffect(() => {
     if (!wallet) {
       setLoading(false);
@@ -28,5 +42,12 @@ export function useBalance(wallet: string | undefined) {
     return () => clearInterval(id);
   }, [wallet, refresh]);
 
-  return { balance, loading, refresh };
+  useEffect(() => {
+    if (!wallet) return;
+    refreshOnchain();
+    const id = setInterval(refreshOnchain, ONCHAIN_POLL_INTERVAL);
+    return () => clearInterval(id);
+  }, [wallet, refreshOnchain]);
+
+  return { balance, onchainBalance, loading, refresh };
 }

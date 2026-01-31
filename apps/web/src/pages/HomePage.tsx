@@ -20,13 +20,13 @@ const actions = [
 
 export default function HomePage() {
   const { address } = useWallet();
-  const { balance, loading } = useBalance(address);
+  const { balance, onchainBalance, loading } = useBalance(address);
   const navigate = useNavigate();
   const txs = getTransactions();
 
   return (
     <div className="px-4 pb-4">
-      <BalanceCard balance={balance} loading={loading} />
+      <BalanceCard balance={balance} onchainBalance={onchainBalance} loading={loading} />
       <div className="grid grid-cols-4 gap-2 mb-6">
         {actions.map(a => (
           <button key={a.path} onClick={() => navigate(a.path)} className="flex flex-col items-center gap-1.5 py-3 rounded-2xl bg-gray-50 active:bg-gray-100 transition-colors">
