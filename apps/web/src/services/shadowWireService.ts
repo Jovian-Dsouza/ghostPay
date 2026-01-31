@@ -28,8 +28,14 @@ export async function withdraw(wallet: string, amount: number): Promise<Withdraw
   return sw.withdraw({ wallet, amount: smallestUnit, token_mint: DEFAULT_TOKEN_MINT });
 }
 
+// transfer() expects display amounts — the SDK converts to smallest units internally
 export async function transfer(from: string, to: string, amount: number): Promise<void> {
   const sw = getClient();
-  const smallestUnit = TokenUtils.toSmallestUnit(amount, DEFAULT_TOKEN);
-  await sw.transfer({ sender: from, recipient: to, amount: smallestUnit, token: DEFAULT_TOKEN, type: 'internal' });
+  await sw.transfer({ sender: from, recipient: to, amount, token: DEFAULT_TOKEN, type: 'internal' });
+}
+
+export function getTransferFee(amount: number): number {
+  const sw = getClient();
+  const feePercent = sw.getFeePercentage(DEFAULT_TOKEN);
+  return amount * feePercent;
 }

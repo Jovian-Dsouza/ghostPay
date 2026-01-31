@@ -2,7 +2,7 @@ import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../contexts/WalletContext';
 import { useBalance } from '../hooks/useBalance';
-import { transfer } from '../services/shadowWireService';
+import { transfer, getTransferFee } from '../services/shadowWireService';
 import QRScanner from '../components/QRScanner';
 import type { Transaction } from '../types';
 import { parseErrorMessage } from '../utils/parseError';
@@ -116,6 +116,8 @@ export default function ScanPage() {
   }
 
   if (status === 'confirm' && parsed) {
+    const fee = getTransferFee(parsed.amount);
+    const total = parsed.amount + fee;
     return (
       <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
         <div className="text-center">
@@ -124,6 +126,12 @@ export default function ScanPage() {
           <p className="text-xs text-gray-400 mt-2 font-mono break-all">
             To: {parsed.recipient.slice(0, 8)}...{parsed.recipient.slice(-8)}
           </p>
+          {fee > 0 && (
+            <div className="mt-3 text-xs text-gray-400">
+              <p>Fee: ${fee.toFixed(2)}</p>
+              <p className="font-semibold text-gray-600">Total: ${total.toFixed(2)}</p>
+            </div>
+          )}
         </div>
         <div className="flex gap-2 w-full">
           <button onClick={() => { setStatus('scan'); setParsed(null); }} className="flex-1 py-3.5 text-black text-xs font-black rounded-full border border-gray-200 uppercase tracking-widest">
