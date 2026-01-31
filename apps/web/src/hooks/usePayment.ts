@@ -13,9 +13,9 @@ interface PaymentSession {
 export function usePayment(wallet: string | undefined) {
   const [session, setSession] = useState<PaymentSession | null>(null);
   const [timeRemaining, setTimeRemaining] = useState(SESSION_TIMEOUT);
-  const pollRef = useRef<ReturnType<typeof setInterval>>();
-  const timerRef = useRef<ReturnType<typeof setInterval>>();
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const pollRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const timerRef = useRef<ReturnType<typeof setInterval> | undefined>(undefined);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const createdAtRef = useRef(0);
 
   const cancel = useCallback(() => {
