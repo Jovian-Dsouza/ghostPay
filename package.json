@@ -4,6 +4,10 @@
   "scripts": {
     "build": "turbo run build",
     "dev": "turbo run dev",
+    "build:web": "turbo run build --filter=web",
+    "dev:web": "turbo run dev --filter=web",
+    "build:kiosk": "turbo run build --filter=kiosk",
+    "dev:kiosk": "turbo run dev --filter=kiosk",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
