@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../contexts/WalletContext';
 import { useBalance } from '../hooks/useBalance';
 import { deposit } from '../services/shadowWireService';
+import { signAndSendTransaction } from '../services/transactionService';
 import AmountInput from '../components/AmountInput';
 import type { Transaction } from '../types';
 import { parseErrorMessage } from '../utils/parseError';
@@ -14,17 +15,18 @@ function saveTx(tx: Transaction) {
 }
 
 export default function DepositPage() {
-  const { address } = useWallet();
+  const { address, walletProvider, connection } = useWallet();
   const { balance, onchainBalance } = useBalance(address);
   const navigate = useNavigate();
   const [status, setStatus] = useState<'input' | 'loading' | 'success' | 'error'>('input');
   const [error, setError] = useState('');
 
   const handleConfirm = async (amount: number) => {
-    if (!address) return;
+    if (!address || !walletProvider || !connection) return;
     setStatus('loading');
     try {
-      await deposit(address, amount);
+      const response = await deposit(address, amount);
+      await signAndSendTransaction(response.unsigned_tx_base64, walletProvider, connection);
       saveTx({
         id: crypto.randomUUID(),
         type: 'deposit',

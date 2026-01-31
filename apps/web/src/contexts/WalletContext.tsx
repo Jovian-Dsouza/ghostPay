@@ -1,5 +1,6 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { createAppKit, useAppKitAccount } from '@reown/appkit/react';
+import { createAppKit, useAppKitAccount, useAppKitProvider } from '@reown/appkit/react';
+import { useAppKitConnection, type Provider } from '@reown/appkit-adapter-solana/react';
 import { SolanaAdapter } from '@reown/appkit-adapter-solana';
 import { solana } from '@reown/appkit/networks';
 import { REOWN_PROJECT_ID, REOWN_METADATA } from '../config/reown';
@@ -19,18 +20,24 @@ createAppKit({
 interface WalletContextType {
   address: string | undefined;
   isConnected: boolean;
+  walletProvider: Provider | undefined;
+  connection: ReturnType<typeof useAppKitConnection>['connection'] | undefined;
 }
 
 const WalletContext = createContext<WalletContextType>({
   address: undefined,
   isConnected: false,
+  walletProvider: undefined,
+  connection: undefined,
 });
 
 export function WalletProvider({ children }: { children: ReactNode }) {
   const { address, isConnected } = useAppKitAccount();
+  const { walletProvider } = useAppKitProvider<Provider>('solana');
+  const { connection } = useAppKitConnection();
 
   return (
-    <WalletContext.Provider value={{ address, isConnected }}>
+    <WalletContext.Provider value={{ address, isConnected, walletProvider, connection }}>
       {children}
     </WalletContext.Provider>
   );
