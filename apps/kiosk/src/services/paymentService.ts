@@ -50,7 +50,7 @@ class PaymentService {
     return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
   }
 
-  private generateQRData(amount: number, token: string, tokenMint: string, reference: string): string {
+  private generateQRData(amount: number, tokenMint: string, reference: string): string {
     const params = new URLSearchParams();
     params.set('recipient', MERCHANT_WALLET);
     params.set('amount', amount.toString());
@@ -73,7 +73,7 @@ class PaymentService {
     this.cancelSession();
 
     const reference = this.generateReference();
-    const qrData = this.generateQRData(config.amount, config.token, config.tokenMint, reference);
+    const qrData = this.generateQRData(config.amount, config.tokenMint, reference);
     this.currentSession = {
       id: crypto.randomUUID(),
       amount: config.amount,
