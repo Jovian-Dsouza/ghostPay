@@ -7,34 +7,54 @@ interface Props {
 }
 
 export default function QRScanner({ onScan, onError }: Props) {
-  const scannerRef = useRef<Html5Qrcode | null>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const onScanRef = useRef(onScan);
+  const onErrorRef = useRef(onError);
+  onScanRef.current = onScan;
+  onErrorRef.current = onError;
+  const hostRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    let cancelled = false;
     const id = 'qr-reader-' + Date.now();
-    if (containerRef.current) {
-      containerRef.current.id = id;
-    }
+    const container = document.createElement('div');
+    container.id = id;
+    hostRef.current?.appendChild(container);
 
     const scanner = new Html5Qrcode(id);
-    scannerRef.current = scanner;
 
-    scanner.start(
+    const startPromise = scanner.start(
       { facingMode: 'environment' },
       { fps: 10, qrbox: { width: 250, height: 250 } },
       (decodedText) => {
-        scanner.stop().catch(() => {});
-        onScan(decodedText);
+        if (!cancelled) {
+          cancelled = true;
+          scanner.stop().catch(() => {});
+          onScanRef.current(decodedText);
+        }
       },
       () => {}
-    ).catch((err) => {
-      onError?.(String(err));
-    });
+    );
+
+    startPromise
+      .then(() => {
+        if (cancelled) {
+          scanner.stop().catch(() => {});
+        }
+      })
+      .catch((err) => {
+        if (!cancelled) {
+          onErrorRef.current?.(String(err));
+        }
+      });
 
     return () => {
-      scanner.stop().catch(() => {});
+      cancelled = true;
+      startPromise
+        .then(() => scanner.stop())
+        .catch(() => {});
+      container.remove();
     };
-  }, [onScan, onError]);
+  }, []);
 
-  return <div ref={containerRef} className="w-full rounded-2xl overflow-hidden" />;
+  return <div ref={hostRef} className="w-full rounded-2xl overflow-hidden" />;
 }
