@@ -15,7 +15,7 @@ function saveTx(tx: Transaction) {
 
 export default function DepositPage() {
   const { address } = useWallet();
-  const { balance } = useBalance(address);
+  const { balance, onchainBalance } = useBalance(address);
   const navigate = useNavigate();
   const [status, setStatus] = useState<'input' | 'loading' | 'success' | 'error'>('input');
   const [error, setError] = useState('');
@@ -86,10 +86,15 @@ export default function DepositPage() {
 
   return (
     <div className="h-full flex flex-col">
-      <div className="text-center pt-4">
-        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-          ShadowWire balance: ${balance.toFixed(2)}
-        </p>
+      <div className="flex justify-center gap-3 pt-4 px-4">
+        <div className="flex-1 rounded-xl bg-gray-50 py-2.5 px-3 text-center">
+          <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">ShadowWire</p>
+          <p className="text-sm font-black text-black mt-0.5">${balance.toFixed(2)}</p>
+        </div>
+        <div className="flex-1 rounded-xl bg-gray-50 py-2.5 px-3 text-center">
+          <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">On-chain</p>
+          <p className="text-sm font-black text-black mt-0.5">${onchainBalance.toFixed(2)}</p>
+        </div>
       </div>
       <AmountInput onConfirm={handleConfirm} onCancel={() => navigate('/')} confirmLabel="Deposit" />
     </div>
