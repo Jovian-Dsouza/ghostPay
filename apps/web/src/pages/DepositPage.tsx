@@ -16,7 +16,7 @@ function saveTx(tx: Transaction) {
 
 export default function DepositPage() {
   const { address, walletProvider, connection } = useWallet();
-  const { balance, onchainBalance } = useBalance(address);
+  const { balance, onchainBalance, refresh } = useBalance(address);
   const navigate = useNavigate();
   const [status, setStatus] = useState<'input' | 'loading' | 'success' | 'error'>('input');
   const [error, setError] = useState('');
@@ -27,6 +27,7 @@ export default function DepositPage() {
     try {
       const response = await deposit(address, amount);
       await signAndSendTransaction(response.unsigned_tx_base64, walletProvider, connection);
+      refresh();
       saveTx({
         id: crypto.randomUUID(),
         type: 'deposit',

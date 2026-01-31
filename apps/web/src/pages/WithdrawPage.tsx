@@ -16,7 +16,7 @@ function saveTx(tx: Transaction) {
 
 export default function WithdrawPage() {
   const { address, walletProvider, connection } = useWallet();
-  const { balance } = useBalance(address);
+  const { balance, refresh } = useBalance(address);
   const navigate = useNavigate();
   const [status, setStatus] = useState<'input' | 'loading' | 'success' | 'error'>('input');
   const [error, setError] = useState('');
@@ -30,6 +30,7 @@ export default function WithdrawPage() {
       if (response.unsigned_tx_base64) {
         await signAndSendTransaction(response.unsigned_tx_base64, walletProvider, connection);
       }
+      refresh();
       saveTx({
         id: crypto.randomUUID(),
         type: 'withdraw',

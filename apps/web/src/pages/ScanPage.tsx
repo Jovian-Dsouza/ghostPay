@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../contexts/WalletContext';
+import { useBalance } from '../hooks/useBalance';
 import { transfer } from '../services/shadowWireService';
 import QRScanner from '../components/QRScanner';
 import type { Transaction } from '../types';
@@ -34,6 +35,7 @@ function parseSolanaPayURI(uri: string): ParsedQR | null {
 
 export default function ScanPage() {
   const { address } = useWallet();
+  const { refresh } = useBalance(address);
   const navigate = useNavigate();
   const [parsed, setParsed] = useState<ParsedQR | null>(null);
   const [status, setStatus] = useState<'scan' | 'confirm' | 'loading' | 'success' | 'error'>('scan');
@@ -52,6 +54,7 @@ export default function ScanPage() {
     setStatus('loading');
     try {
       await transfer(address, parsed.recipient, parsed.amount);
+      refresh();
       saveTx({
         id: crypto.randomUUID(),
         type: 'payment',
