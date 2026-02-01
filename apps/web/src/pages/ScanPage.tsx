@@ -35,7 +35,7 @@ function parseSolanaPayURI(uri: string): ParsedQR | null {
 
 export default function ScanPage() {
   const { address } = useWallet();
-  const { refresh } = useBalance(address);
+  const { balance, refresh } = useBalance(address);
   const navigate = useNavigate();
   const [parsed, setParsed] = useState<ParsedQR | null>(null);
   const [status, setStatus] = useState<'scan' | 'confirm' | 'loading' | 'success' | 'error'>('scan');
@@ -54,9 +54,15 @@ export default function ScanPage() {
 
   const handlePay = async () => {
     if (!address || !parsed) return;
+    const total = parsed.amount + fee;
+    if (balance < total) {
+      setError('Insufficient balance');
+      setStatus('error');
+      return;
+    }
     setStatus('loading');
     try {
-      await transfer(address, parsed.recipient, parsed.amount);
+      await transfer(address, parsed.recipient, total);
       refresh();
       saveTx({
         id: crypto.randomUUID(),
