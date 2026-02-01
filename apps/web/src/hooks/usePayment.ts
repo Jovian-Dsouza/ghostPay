@@ -47,10 +47,13 @@ export function usePayment(wallet: string | undefined) {
         const current = await getBalance(wallet);
         const received = current - initialBalance;
         if (received >= amount) {
-          setSession(s => s ? { ...s, status: 'completed' } : null);
           clearInterval(pollRef.current);
           clearInterval(timerRef.current);
           clearTimeout(timeoutRef.current);
+          setSession(s => s ? { ...s, status: 'verifying' } : null);
+          setTimeout(() => {
+            setSession(s => s ? { ...s, status: 'completed' } : null);
+          }, 1500);
         }
       } catch {
         // keep polling

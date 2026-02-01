@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWallet } from '../contexts/WalletContext';
 import { usePayment } from '../hooks/usePayment';
@@ -17,6 +17,21 @@ export default function ReceivePage() {
   const { session, timeRemaining, startReceive, cancel } = usePayment(address);
   const [amount, setAmount] = useState('');
   const [showQR, setShowQR] = useState(false);
+  const savedRef = useRef(false);
+
+  useEffect(() => {
+    if (session?.status === 'completed' && !savedRef.current) {
+      savedRef.current = true;
+      saveTx({
+        id: crypto.randomUUID(),
+        type: 'received',
+        amount: session.amount,
+        status: 'completed',
+        timestamp: new Date().toISOString(),
+      });
+      setTimeout(() => navigate('/'), 2000);
+    }
+  }, [session?.status, session?.amount, navigate]);
 
   const handleGenerate = () => {
     const amt = parseFloat(amount) || 0;
@@ -26,14 +41,6 @@ export default function ReceivePage() {
   };
 
   if (session?.status === 'completed') {
-    saveTx({
-      id: crypto.randomUUID(),
-      type: 'received',
-      amount: session.amount,
-      status: 'completed',
-      timestamp: new Date().toISOString(),
-    });
-    setTimeout(() => navigate('/'), 2000);
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4">
         <div className="bg-black p-4 rounded-full">
@@ -42,6 +49,7 @@ export default function ReceivePage() {
           </svg>
         </div>
         <p className="text-sm font-black uppercase tracking-widest">Payment Received</p>
+        <p className="text-lg font-black tracking-tight">${session.amount.toFixed(2)}</p>
       </div>
     );
   }
@@ -57,7 +65,7 @@ export default function ReceivePage() {
           Requesting ${amt.toFixed(2)}
         </p>
         <QRDisplay wallet={address} amount={amt} />
-        {session && session.status === 'waiting' && (
+        {session?.status === 'waiting' && (
           <>
             <div className="flex items-center gap-2">
               <div className="w-1.5 h-1.5 bg-black rounded-full animate-pulse" />
@@ -65,6 +73,12 @@ export default function ReceivePage() {
             </div>
             <p className="text-[10px] text-gray-400 font-mono">{minutes}:{String(seconds).padStart(2, '0')}</p>
           </>
+        )}
+        {session?.status === 'verifying' && (
+          <div className="flex items-center gap-2">
+            <div className="w-1.5 h-1.5 bg-black rounded-full animate-ping" />
+            <p className="text-xs font-bold">Verifying payment...</p>
+          </div>
         )}
         {session?.status === 'expired' && (
           <p className="text-xs font-bold text-red-500">Session expired</p>
