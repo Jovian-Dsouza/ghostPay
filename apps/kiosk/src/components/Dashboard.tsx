@@ -89,14 +89,14 @@ const Dashboard: React.FC<DashboardProps> = ({ balance, onchainBalance, loading,
           <img src={USD1_LOGO_URL} alt="USD1" className="w-5 h-5 rounded-full" />
         </div>
 
-        {!loading && (
+        {/* {!loading && (
           <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50">
             <div className={`w-1.5 h-1.5 rounded-full ${onchainBalance > 0 ? 'bg-emerald-400' : 'bg-gray-300'}`} />
             <span className="text-xs font-semibold text-gray-500">
               ${(Math.floor(onchainBalance * 1000) / 1000).toFixed(3)} on-chain
             </span>
           </div>
-        )}
+        )} */}
 
         <button
           onClick={onStartPayment}
