@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { getBalance } from '../services/shadowWireService';
+import { getBalance, getTransferFee } from '../services/shadowWireService';
 import { POLL_INTERVAL, SESSION_TIMEOUT } from '../config/shadowwire';
 import type { PaymentStatus } from '../types';
 
@@ -8,6 +8,8 @@ interface PaymentSession {
   amount: number;
   status: PaymentStatus;
   initialBalance: number;
+  fee: number;
+  received: number;
 }
 
 export function usePayment(wallet: string | undefined) {
@@ -31,6 +33,8 @@ export function usePayment(wallet: string | undefined) {
     cancel();
 
     const initialBalance = await getBalance(wallet);
+    const fee = await getTransferFee(amount);
+    const expectedAmount = amount - fee;
     createdAtRef.current = Date.now();
 
     const newSession: PaymentSession = {
@@ -38,6 +42,8 @@ export function usePayment(wallet: string | undefined) {
       amount,
       status: 'waiting',
       initialBalance,
+      fee,
+      received: 0,
     };
     setSession(newSession);
     setTimeRemaining(SESSION_TIMEOUT);
@@ -46,11 +52,11 @@ export function usePayment(wallet: string | undefined) {
       try {
         const current = await getBalance(wallet);
         const received = current - initialBalance;
-        if (received >= amount) {
+        if (received >= expectedAmount) {
           clearInterval(pollRef.current);
           clearInterval(timerRef.current);
           clearTimeout(timeoutRef.current);
-          setSession(s => s ? { ...s, status: 'verifying' } : null);
+          setSession(s => s ? { ...s, status: 'verifying', received } : null);
           setTimeout(() => {
             setSession(s => s ? { ...s, status: 'completed' } : null);
           }, 1500);

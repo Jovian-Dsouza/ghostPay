@@ -49,7 +49,10 @@ export default function ReceivePage() {
           </svg>
         </div>
         <p className="text-sm font-black uppercase tracking-widest">Payment Received</p>
-        <p className="text-lg font-black tracking-tight">${session.amount.toFixed(2)}</p>
+        <p className="text-lg font-black tracking-tight">${session.received.toFixed(2)}</p>
+        {session.fee > 0 && (
+          <p className="text-xs text-gray-400 mt-1">Fee: ${session.fee.toFixed(2)}</p>
+        )}
       </div>
     );
   }
