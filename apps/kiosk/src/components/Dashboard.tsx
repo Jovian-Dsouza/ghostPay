@@ -25,7 +25,7 @@ const GhostIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const Dashboard: React.FC<DashboardProps> = ({ balance, onchainBalance, loading, transactions, onStartPayment }) => {
+const Dashboard: React.FC<DashboardProps> = ({ balance, loading, transactions, onStartPayment }) => {
   const skipOnboarding = SKIP_ONBOARDING;
   const hasTransactions = transactions.length > 0;
 
