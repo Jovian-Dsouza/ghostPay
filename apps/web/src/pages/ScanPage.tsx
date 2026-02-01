@@ -125,7 +125,7 @@ export default function ScanPage() {
       <div className="flex flex-col items-center justify-center h-full gap-6 px-6">
         <div className="text-center">
           <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest mb-2">Confirm Payment</p>
-          <h2 className="text-5xl font-black tracking-tighter text-black">${parsed.amount.toFixed(2)}</h2>
+          <h2 className="text-5xl font-black tracking-tighter text-black">${parsed.amount.toFixed(3)}</h2>
           <p className="text-xs text-gray-400 mt-2 font-mono break-all">
             To: {parsed.recipient.slice(0, 8)}...{parsed.recipient.slice(-8)}
           </p>

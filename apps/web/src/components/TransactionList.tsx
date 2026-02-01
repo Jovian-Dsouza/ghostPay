@@ -38,7 +38,7 @@ export default function TransactionList({ transactions, limit }: Props) {
           </div>
           <div className="text-right">
             <p className={`text-sm font-bold ${typeColors[tx.type]}`}>
-              {tx.type === 'deposit' || tx.type === 'received' ? '+' : '-'}${tx.amount.toFixed(2)}
+              {tx.type === 'deposit' || tx.type === 'received' ? '+' : '-'}${tx.amount.toFixed(3)}
             </p>
             <p className={`text-[10px] font-semibold uppercase ${tx.status === 'completed' ? 'text-gray-400' : tx.status === 'failed' ? 'text-red-400' : 'text-yellow-500'}`}>
               {tx.status}

@@ -49,9 +49,9 @@ export default function ReceivePage() {
           </svg>
         </div>
         <p className="text-sm font-black uppercase tracking-widest">Payment Received</p>
-        <p className="text-lg font-black tracking-tight">${session.received.toFixed(2)}</p>
+        <p className="text-lg font-black tracking-tight">${session.received.toFixed(3)}</p>
         {session.fee > 0 && (
-          <p className="text-xs text-gray-400 mt-1">Fee: ${session.fee.toFixed(2)}</p>
+          <p className="text-xs text-gray-400 mt-1">Fee: ${session.fee.toFixed(3)}</p>
         )}
       </div>
     );
@@ -65,7 +65,7 @@ export default function ReceivePage() {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 px-4">
         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-          Requesting ${amt.toFixed(2)}
+          Requesting ${amt.toFixed(3)}
         </p>
         <QRDisplay wallet={address} amount={amt} />
         {session?.status === 'waiting' && (
