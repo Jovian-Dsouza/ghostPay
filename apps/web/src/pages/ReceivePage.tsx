@@ -20,10 +20,9 @@ export default function ReceivePage() {
 
   const handleGenerate = () => {
     const amt = parseFloat(amount) || 0;
+    if (amt <= 0) return;
     setShowQR(true);
-    if (amt > 0) {
-      startReceive(amt);
-    }
+    startReceive(amt);
   };
 
   if (session?.status === 'completed') {
@@ -55,9 +54,9 @@ export default function ReceivePage() {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-4 px-4">
         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-          {amt > 0 ? `Requesting $${amt.toFixed(2)}` : 'Receive Payment'}
+          Requesting ${amt.toFixed(2)}
         </p>
-        <QRDisplay wallet={address} amount={amt > 0 ? amt : undefined} />
+        <QRDisplay wallet={address} amount={amt} />
         {session && session.status === 'waiting' && (
           <>
             <div className="flex items-center gap-2">
@@ -84,16 +83,17 @@ export default function ReceivePage() {
         <input
           type="number"
           inputMode="decimal"
-          placeholder="Amount (optional)"
+          placeholder="Amount"
           value={amount}
           onChange={e => setAmount(e.target.value)}
           className="w-full text-center text-3xl font-black tracking-tighter text-black bg-transparent border-b-2 border-gray-200 focus:border-black outline-none pb-2 transition-colors"
         />
-        <p className="text-xs text-gray-400 mt-2">Leave empty for open amount</p>
+        <p className="text-xs text-gray-400 mt-2">Enter the amount to receive</p>
       </div>
       <button
         onClick={handleGenerate}
-        className="w-full py-4 bg-black text-white text-xs font-black rounded-full active:scale-95 transition-all uppercase tracking-widest"
+        disabled={!amount || parseFloat(amount) <= 0}
+        className="w-full py-4 bg-black text-white text-xs font-black rounded-full active:scale-95 transition-all uppercase tracking-widest disabled:opacity-30 disabled:active:scale-100"
       >
         Show QR Code
       </button>
