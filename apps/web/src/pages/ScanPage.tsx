@@ -72,6 +72,7 @@ export default function ScanPage() {
         timestamp: new Date().toISOString(),
         counterparty: parsed.recipient,
       });
+      new Audio('/audio/payment_success.mp3').play();
       setStatus('success');
       setTimeout(() => navigate('/'), 2000);
     } catch (e) {
