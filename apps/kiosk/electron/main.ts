@@ -81,7 +81,12 @@ app.whenReady().then(() => {
   db.initDatabase();
 
   ipcMain.handle('db:get-transactions', () => db.getTransactions());
-  ipcMain.handle('db:save-transaction', (_, tx) => db.saveTransaction(tx));
+  ipcMain.handle('db:save-transaction', (_, tx) => {
+    return db.saveTransaction({
+      ...tx,
+      timestamp: new Date(tx.timestamp),
+    });
+  });
   ipcMain.handle('db:delete-transaction', (_, id) => db.deleteTransaction(id));
 
   createWindow();

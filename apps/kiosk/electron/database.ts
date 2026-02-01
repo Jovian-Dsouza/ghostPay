@@ -65,6 +65,11 @@ export function getTransactions(): Transaction[] {
 export function saveTransaction(tx: Transaction): void {
   if (!db) throw new Error('Database not initialized');
 
+  // Handle both Date objects and ISO strings
+  const timestamp = tx.timestamp instanceof Date
+    ? tx.timestamp
+    : new Date(tx.timestamp);
+
   const stmt = db.prepare(`
     INSERT OR REPLACE INTO transactions (id, amount, currency, status, timestamp, customer_name, crypto_type, token_mint)
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)
@@ -75,7 +80,7 @@ export function saveTransaction(tx: Transaction): void {
     tx.amount,
     tx.currency,
     tx.status,
-    tx.timestamp.toISOString(),
+    timestamp.toISOString(),
     tx.customerName ?? null,
     tx.cryptoType,
     tx.tokenMint ?? null
