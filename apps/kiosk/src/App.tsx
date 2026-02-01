@@ -8,10 +8,13 @@ import Keypad from './components/Keypad';
 import PaymentQR from './components/PaymentQR';
 import History from './components/History';
 import { useTransactions } from './hooks/useTransactions';
+import { useBalance } from './hooks/useBalance';
+import { MERCHANT_WALLET, SKIP_ONBOARDING } from './config/shadowwire';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.DASHBOARD);
   const { transactions, addTransaction } = useTransactions();
+  const { balance, onchainBalance, loading, refresh } = useBalance(MERCHANT_WALLET);
   const [pendingAmount, setPendingAmount] = useState<number>(0);
   const [selectedToken, setSelectedToken] = useState<string>('USD1');
 
@@ -36,17 +39,21 @@ const App: React.FC = () => {
       cryptoType: selectedToken
     };
     addTransaction(newTx);
+    refresh(); // Trigger fast polling after payment
     setView(AppView.DASHBOARD);
     setPendingAmount(0);
-  }, [pendingAmount, selectedToken, addTransaction]);
-
-  const dontShowHeader = (view === AppView.DASHBOARD && transactions.length === 0) || view === AppView.KEYPAD || view === AppView.PAYMENT_QR || view === AppView.HISTORY;
+  }, [pendingAmount, selectedToken, addTransaction, refresh]);
+  const skipOnboarding = SKIP_ONBOARDING;
+  const dontShowHeader = (view === AppView.DASHBOARD && (transactions.length === 0 && !skipOnboarding)) || view === AppView.KEYPAD || view === AppView.PAYMENT_QR || view === AppView.HISTORY;
 
   return (
     <div>
       <Layout showHeader={!dontShowHeader}>
         {view === AppView.DASHBOARD && (
           <Dashboard
+            balance={balance}
+            onchainBalance={onchainBalance}
+            loading={loading}
             transactions={transactions}
             onStartPayment={() => setView(AppView.KEYPAD)}
           />

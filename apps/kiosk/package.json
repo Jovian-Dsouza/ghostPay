@@ -13,6 +13,7 @@
   "dependencies": {
     "@google/genai": "^1.38.0",
     "@radr/shadowwire": "^1.1.15",
+    "@solana/web3.js": "^1.98.4",
     "better-sqlite3": "^12.6.2",
     "buffer": "^6.0.3",
     "react": "^19.2.3",

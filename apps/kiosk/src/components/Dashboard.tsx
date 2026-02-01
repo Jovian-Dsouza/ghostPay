@@ -2,8 +2,12 @@
 import React from 'react';
 import { Transaction } from '../types';
 import { USD1_LOGO_URL } from '../types';
+import { SKIP_ONBOARDING } from '@/config/shadowwire';
 
 interface DashboardProps {
+  balance: number;
+  onchainBalance: number;
+  loading: boolean;
   transactions: Transaction[];
   onStartPayment: () => void;
 }
@@ -21,14 +25,11 @@ const GhostIcon: React.FC<{ className?: string }> = ({ className }) => (
   </svg>
 );
 
-const Dashboard: React.FC<DashboardProps> = ({ transactions, onStartPayment }) => {
-  const totalBalance = transactions
-    .filter(t => t.status === 'completed')
-    .reduce((acc, curr) => acc + curr.amount, 0);
-
+const Dashboard: React.FC<DashboardProps> = ({ balance, onchainBalance, loading, transactions, onStartPayment }) => {
+  const skipOnboarding = SKIP_ONBOARDING;
   const hasTransactions = transactions.length > 0;
 
-  if (!hasTransactions) {
+  if (!(hasTransactions || skipOnboarding)) {
     return (
       <div className="h-full flex flex-col items-center justify-center relative overflow-hidden animate-in fade-in duration-500">
         {/* Background decorative elements */}
@@ -76,14 +77,26 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions, onStartPayment }) =
     <div className="space-y-4 pt-4 pb-2 animate-in fade-in duration-500">
       {/* Balance Display */}
       <div className="text-center pt-2">
-        <p className="text-[#8A8A8F] text-[11px] font-bold tracking-[0.15em] uppercase mb-0.5">Total Revenue</p>
-        <div className="flex items-center justify-center">
-           <h1 className="text-[44px] font-black leading-tight tracking-tighter text-black">
-            <span className="text-[32px] align-top mr-0.5 opacity-30 font-bold">$</span>
-            {Math.floor(totalBalance)}
-            <span className="text-[32px] opacity-50">.{(totalBalance % 1).toFixed(3).split('.')[1]}</span>
-          </h1>
+        <h1 className="text-5xl font-black tracking-tighter text-black">
+          {loading ? (
+            <span className="inline-block w-32 h-12 bg-gray-100 rounded-lg animate-pulse" />
+          ) : (
+            `$${(Math.floor(balance * 1000) / 1000).toFixed(3)}`
+          )}
+        </h1>
+        <div className="flex items-center justify-center gap-2 mb-1">
+          <p className="text-sm text-gray-400 mt-1 font-medium">USD1</p>
+          <img src={USD1_LOGO_URL} alt="USD1" className="w-5 h-5 rounded-full" />
         </div>
+
+        {!loading && (
+          <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gray-50">
+            <div className={`w-1.5 h-1.5 rounded-full ${onchainBalance > 0 ? 'bg-emerald-400' : 'bg-gray-300'}`} />
+            <span className="text-xs font-semibold text-gray-500">
+              ${(Math.floor(onchainBalance * 1000) / 1000).toFixed(3)} on-chain
+            </span>
+          </div>
+        )}
 
         <button
           onClick={onStartPayment}
