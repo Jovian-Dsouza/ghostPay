@@ -20,7 +20,7 @@ export function usePayment() {
   }, []);
 
   useEffect(() => {
-    if (!session || session.status === 'completed' || session.status === 'expired' || session.status === 'error') {
+    if (!session || session.status === 'completed' || session.status === 'expired' || session.status === 'error' || session.status === 'verifying') {
       return;
     }
 
