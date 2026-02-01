@@ -40,11 +40,14 @@ export default function ScanPage() {
   const [parsed, setParsed] = useState<ParsedQR | null>(null);
   const [status, setStatus] = useState<'scan' | 'confirm' | 'loading' | 'success' | 'error'>('scan');
   const [error, setError] = useState('');
+  const [fee, setFee] = useState(0);
 
-  const handleScan = useCallback((data: string) => {
+  const handleScan = useCallback(async (data: string) => {
     const result = parseSolanaPayURI(data);
     if (result) {
       setParsed(result);
+      const f = await getTransferFee(result.amount);
+      setFee(f);
       setStatus('confirm');
     }
   }, []);
@@ -116,7 +119,6 @@ export default function ScanPage() {
   }
 
   if (status === 'confirm' && parsed) {
-    const fee = getTransferFee(parsed.amount);
     const total = parsed.amount + fee;
     return (
       <div className="flex flex-col items-center justify-center h-full gap-6 px-6">

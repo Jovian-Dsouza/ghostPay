@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  assetsInclude: ['**/*.wasm'],
   resolve: {
     alias: {
       buffer: 'buffer/',
@@ -15,6 +16,6 @@ export default defineConfig({
     esbuildOptions: {
       define: { global: 'globalThis' },
     },
-    include: ['buffer'],
+    include: ['buffer', '@radr/shadowwire'],
   },
 })
