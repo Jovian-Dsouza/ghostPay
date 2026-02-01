@@ -40,11 +40,11 @@ const App: React.FC = () => {
     setPendingAmount(0);
   }, [pendingAmount, selectedToken, addTransaction]);
 
-  const showHeader = !(view === AppView.DASHBOARD && transactions.length === 0);
+  const dontShowHeader = (view === AppView.DASHBOARD && transactions.length === 0) || view === AppView.KEYPAD || view === AppView.PAYMENT_QR || view === AppView.HISTORY;
 
   return (
     <div>
-      <Layout showHeader={showHeader}>
+      <Layout showHeader={!dontShowHeader}>
         {view === AppView.DASHBOARD && (
           <Dashboard
             transactions={transactions}
