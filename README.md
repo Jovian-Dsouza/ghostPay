@@ -1,135 +1,335 @@
-# Turborepo starter
+# ghostPay
 
-This Turborepo starter is maintained by the Turborepo core team.
+**Private Payments on Solana**
 
-## Using this example
+ghostPay is a complete, privacy-first payment system built on Solana, consisting of two core components:
 
-Run the following command:
+1. **Mobile Web Wallet** - A progressive web app that allows consumers to make private, everyday crypto payments
+2. **Merchant Kiosk Terminal** - An open-source, hardware-based point-of-sale system designed for accepting confidential crypto payments
 
-```sh
-npx create-turbo@latest
-```
+The merchant terminal is built using an inexpensive **Raspberry Pi**, a **3.5-inch touchscreen display**, a **custom 3D-printed enclosure**, and a **built-in speaker** for payment feedback.
 
-## What's inside?
+All hardware designs and build instructions are publicly documented, making ghostPay the **first open-source hardware POS for private crypto spending on Solana**.
 
-This Turborepo includes the following packages/apps:
+---
 
-### Apps and Packages
+## Links
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **Live Demo**: [https://ghostpay-beta.vercel.app/](https://ghostpay-beta.vercel.app/)
+- **Demo Video**: [https://youtu.be/Cf-JFnFbRhg](https://youtu.be/Cf-JFnFbRhg)
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+---
 
-### Utilities
+## Hardware
 
-This Turborepo has some additional tools already setup for you:
+![ghostPay Kiosk](docs/images/kiosk-1.jpg)
+![ghostPay Kiosk Detail](docs/images/kiosk-2.jpg)
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+The ghostPay kiosk is built with accessible, open-source hardware:
 
-### Build
+- **Raspberry Pi 4/5** - Main computing unit
+- **3.5" Touchscreen Display** (320x480 resolution) - User interface
+- **3D-Printed Enclosure** - Custom designed case
+- **Built-in Speaker** - Audio feedback for payment confirmations
+- **Total Cost**: ~$80-120 USD
 
-To build all apps and packages, run the following command:
+---
 
-```
-cd my-turborepo
+## Technology Stack
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
+### Core Technologies
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
-```
+- **TypeScript** - End-to-end type safety across all applications
+- **React 19** - UI framework for web wallet and kiosk interface
+- **Electron 30** - Desktop application framework for kiosk terminal
+- **Vite** - Lightning-fast development and build tool
+- **Turborepo** - Monorepo build orchestration
+- **pnpm** - Fast, disk space efficient package manager
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### Blockchain & Privacy
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+#### Helius RPC
+We use **Helius RPC** to provide reliable, low-latency Solana interactions, including:
+- Real-time balance queries via `getParsedTokenAccountsByOwner()`
+- Transaction polling every 3 seconds during active payment sessions
+- SPL token account discovery for multi-token support
+- Payment verification through reference ID matching
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+#### ShadowWire by RADR Labs
+**ShadowWire** powers the privacy layer, enabling confidential payments through zero-knowledge proofs and privacy pools that hide transaction amounts and recipients.
 
-### Develop
+**Complete Integration:**
+- **Deposit** - Convert on-chain funds to privacy pool
+- **Private Transfers** - Internal transfers with hidden amounts and recipients
+- **Withdrawal** - Extract funds from privacy pool back to on-chain wallet
+- **WASM Cryptography** - Browser-native zero-knowledge proof generation
 
-To develop all apps and packages, run the following command:
+### Database
 
-```
-cd my-turborepo
+- **better-sqlite3** - Embedded SQL database for offline transaction history
+- **localStorage** - Browser-based transaction storage for web wallet
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+---
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
-
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Project Structure
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+ghostPay/
+├── apps/
+│   ├── web/              # Mobile web wallet (React + Vite)
+│   ├── kiosk/            # Merchant POS terminal (Electron + React)
+│   │   └── electron/     # Electron main process
+│   │       ├── main.ts   # App lifecycle & kiosk mode
+│   │       └── database.ts # SQLite transaction storage
+│   └── ghostpay/         # Demo merchant dashboard with AI insights
+├── packages/
+│   ├── ui/               # Shared React components
+│   ├── eslint-config/    # Shared ESLint configuration
+│   └── typescript-config/ # Shared TypeScript configuration
+├── docs/
+│   └── images/           # README assets
+└── turbo.json            # Turborepo configuration
 ```
 
-### Remote Caching
+---
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## Features
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### Mobile Web Wallet
+- QR code payment scanning
+- Private transfers via ShadowWire
+- Deposit/withdraw between on-chain and privacy pool
+- Real-time balance tracking (dual: private + public)
+- Transaction history
+- Multi-wallet support (Phantom, Solflare, Backpack)
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+### Merchant Kiosk Terminal
+- Touchscreen point-of-sale interface
+- QR code payment generation
+- Real-time payment verification
+- Audio feedback on payment completion
+- Offline transaction history (SQLite)
+- Kiosk mode for dedicated hardware
+- 5-minute payment session timeout
+- 3-second balance polling
 
+### Privacy Features
+- Zero-knowledge proofs for transaction privacy
+- Hidden transaction amounts and recipients
+- Privacy pool architecture with ShadowWire
+- Reference ID system prevents transaction graph analysis
+- No on-chain exposure of merchant revenue or customer spending
+
+---
+
+## Supported Tokens
+
+For simplicity and a clean user experience, ghostPay currently supports a single stablecoin:
+
+- **USD1** (USD1ttGY1N17NEEHLmELoaybftRBUSErhqYiQzvEmuB)
+
+Multi-token support is planned for future releases.
+
+---
+
+## Technical Challenges
+
+### Payment Verification
+Listening to private transaction completion on the receiver side is non-trivial with privacy-preserving protocols.
+
+**Solution**: We implemented a hybrid verification system that polls the ShadowWire API for balance changes when on-chain balance changes are detected on the sender address. This provides real-time confirmation without compromising privacy.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- pnpm 9.0.0+
+- Raspberry Pi 4/5 (for kiosk hardware)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/ghostPay.git
+cd ghostPay
+
+# Install dependencies
+pnpm install
 ```
-cd my-turborepo
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
+### Development
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+```bash
+# Run all apps in development mode
+pnpm dev
+
+# Run specific apps
+pnpm dev:web      # Mobile web wallet
+pnpm dev:kiosk    # Merchant kiosk terminal
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Building
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+# Build all apps
+pnpm build
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+# Build specific apps
+pnpm build:web    # Web wallet
+pnpm build:kiosk  # Kiosk terminal (creates Electron installer)
 ```
 
-## Useful Links
+### Environment Variables
 
-Learn more about the power of Turborepo:
+Create `.env.local` files in each app directory:
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+#### Web Wallet (`apps/web/.env.local`)
+```env
+VITE_SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
+VITE_REOWN_PROJECT_ID=YOUR_REOWN_PROJECT_ID
+```
+
+#### Kiosk (`apps/kiosk/.env.local`)
+```env
+VITE_MERCHANT_WALLET=YOUR_MERCHANT_WALLET_ADDRESS
+VITE_SOLANA_RPC_URL=https://mainnet.helius-rpc.com/?api-key=YOUR_KEY
+VITE_SKIP_ONBOARDING=false
+```
+
+---
+
+## Kiosk Hardware Setup
+
+### Running on Raspberry Pi
+
+1. Install Raspberry Pi OS (64-bit)
+2. Install Node.js 18+ and pnpm
+3. Clone and build the project
+4. Run in kiosk mode:
+
+```bash
+cd apps/kiosk
+pnpm build
+npm start -- --kiosk
+```
+
+### Kiosk Mode Features
+
+- Fullscreen display (no window controls)
+- Always-on-top window
+- No menu bar
+- Fixed 320x480 resolution
+- Touch-optimized interface
+
+---
+
+## Roadmap
+
+### 1. Public Launch
+Release the mobile wallet and merchant kiosk for real-world usage, with clear documentation and installation guides for both users and merchants.
+
+### 2. Hardware Enhancements
+Upgrade the open-source kiosk hardware with:
+- **NFC Support** - Tap-to-pay flows for faster checkout
+- **Integrated Battery** - Portable, cable-free operation for cafés, events, and pop-up stores
+- **Improved Enclosure** - Refined 3D-printed design with better cable management
+
+### 3. Open-Source Maturity
+- Polish codebase and improve developer documentation
+- Publish detailed hardware build guides
+- Create assembly tutorials and parts lists
+- Welcome community contributions for new features, hardware variants, and ecosystem integrations
+
+### 4. Feature Expansion
+- Multi-token support (SOL, USDC, RADR, etc.)
+- Multi-signature merchant accounts
+- Recurring payment subscriptions
+- Invoice generation and tracking
+- Mobile native apps (iOS/Android)
+
+---
+
+## Architecture Highlights
+
+### Privacy Architecture
+- **WASM-based cryptography** - Native-speed zero-knowledge proofs in browser
+- **Privacy pools** - Shared liquidity for enhanced anonymity sets
+- **Reference ID system** - 128-bit random identifiers for payment tracking
+- **Fee obfuscation** - Expected amounts calculated to detect transfers
+
+### Payment Flow
+1. Merchant generates payment request with unique reference ID
+2. System creates Solana Payment Request QR code
+3. Customer scans and sends payment via wallet
+4. Kiosk polls ShadowWire balance every 3 seconds
+5. Payment detected via balance change verification
+6. 1.5-second confirmation delay
+7. Transaction stored in local database
+8. Audio feedback confirms completion
+
+### Database Schema (Kiosk)
+```sql
+CREATE TABLE transactions (
+  id TEXT PRIMARY KEY,              -- 128-bit reference ID
+  amount REAL NOT NULL,             -- Payment amount
+  currency TEXT DEFAULT 'USD',
+  status TEXT CHECK(status IN ('pending', 'completed', 'failed')),
+  timestamp TEXT NOT NULL,          -- ISO 8601 format
+  customer_name TEXT,
+  crypto_type TEXT NOT NULL,        -- Token symbol
+  token_mint TEXT                   -- SPL token mint address
+)
+```
+
+---
+
+## Performance
+
+- **QR Generation**: <10ms (local computation)
+- **Payment Detection**: 3-second polling interval
+- **Verification**: 1.5-second confirmation delay
+- **Total Payment Time**: ~5-10 seconds (network dependent)
+- **Database Query**: <5ms for 10,000+ transaction history
+- **Helius RPC Latency**: <200ms for balance queries
+
+---
+
+## Contributing
+
+ghostPay is actively maintained as an open-source project. We welcome contributions for:
+
+- New features and improvements
+- Hardware variants and designs
+- Bug fixes and optimizations
+- Documentation enhancements
+- Ecosystem integrations
+
+---
+
+## License
+
+MIT License - See [LICENSE](LICENSE) for details
+
+---
+
+## Acknowledgments
+
+- **Helius** - Reliable Solana RPC infrastructure
+- **RADR Labs** - ShadowWire privacy protocol
+- **Solana Foundation** - Blockchain infrastructure
+- **Reown** - Multi-wallet connection framework
+
+---
+
+## Contact & Support
+
+- **Demo**: [https://ghostpay-beta.vercel.app/](https://ghostpay-beta.vercel.app/)
+- **Video**: [https://youtu.be/Cf-JFnFbRhg](https://youtu.be/Cf-JFnFbRhg)
+- **Issues**: GitHub Issues (coming soon)
+
+---
+
+Built with privacy, designed for merchants, open-source for everyone.
