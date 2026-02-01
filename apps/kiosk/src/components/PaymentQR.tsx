@@ -60,6 +60,11 @@ const PaymentQR: React.FC<PaymentQRProps> = ({ amount, token, onComplete, onBack
           <h2 className="text-[42px] font-black text-black leading-tight tracking-tighter">
             ${(Math.floor(amount * 1000) / 1000).toFixed(3)}
           </h2>
+          {session?.fee && session.fee > 0 && (
+            <p className="text-xs text-gray-400 mt-1">
+              Fee: ${(Math.floor(session.fee * 1000) / 1000).toFixed(3)}
+            </p>
+          )}
           <div className="px-3 py-1 bg-black text-white text-[10px] font-black rounded-full uppercase tracking-widest mt-1">
             Crypto secured
           </div>

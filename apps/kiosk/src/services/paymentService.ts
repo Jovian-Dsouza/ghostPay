@@ -1,6 +1,7 @@
 import { ShadowWireClient, type TokenSymbol } from '@radr/shadowwire';
 import { MERCHANT_WALLET, POLL_INTERVAL, SESSION_TIMEOUT } from '../config/shadowwire';
 import type { PaymentSession, PaymentSessionConfig, PaymentStatus } from '../types/payment';
+import { getTransferFee } from './shadowWireService';
 
 type StatusChangeCallback = (session: PaymentSession) => void;
 
@@ -11,6 +12,7 @@ class PaymentService {
   private pollInterval: ReturnType<typeof setInterval> | null = null;
   private timeoutTimer: ReturnType<typeof setTimeout> | null = null;
   private statusChangeCallbacks: Set<StatusChangeCallback> = new Set();
+  private balanceRefreshCallback: (() => void) | null = null;
 
   private constructor() {
     this.initializeShadowWire();
@@ -72,6 +74,10 @@ class PaymentService {
     // Cancel any existing session
     this.cancelSession();
 
+    // Calculate transfer fee and expected amount
+    const fee = await getTransferFee(config.amount);
+    const expectedAmount = config.amount - fee;
+
     const reference = this.generateReference();
     const qrData = this.generateQRData(config.amount, config.tokenMint, reference);
     this.currentSession = {
@@ -84,12 +90,19 @@ class PaymentService {
       qrData,
       initialBalance: 0, // Will be updated asynchronously
       reference,
+      fee,
+      expectedAmount,
     };
 
     // Notify immediately so QR shows up without delay
     this.notifyStatusChange();
     this.startPolling();
     this.startTimeoutTimer();
+
+    // Trigger fast polling
+    if (this.balanceRefreshCallback) {
+      this.balanceRefreshCallback();
+    }
 
     // Fetch initial balance asynchronously without blocking QR display
     if (this.shadowWireClient) {
@@ -143,7 +156,7 @@ class PaymentService {
       const currentBalance = poolBalance.available || 0;
       const received = currentBalance - this.currentSession.initialBalance;
 
-      if (received >= this.currentSession.amount) {
+      if (received >= this.currentSession.expectedAmount) {
         this.updateStatus('verifying');
 
         // Brief verification delay then complete
@@ -194,6 +207,10 @@ class PaymentService {
     if (!this.currentSession) return 0;
     const elapsed = Date.now() - this.currentSession.createdAt;
     return Math.max(0, SESSION_TIMEOUT - elapsed);
+  }
+
+  setBalanceRefreshCallback(callback: (() => void) | null): void {
+    this.balanceRefreshCallback = callback;
   }
 }
 

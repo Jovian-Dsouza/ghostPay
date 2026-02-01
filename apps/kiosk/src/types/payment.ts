@@ -10,6 +10,8 @@ export interface PaymentSession {
   qrData: string;
   initialBalance: number;
   reference: string;
+  fee: number;
+  expectedAmount: number;
   errorMessage?: string;
 }
 

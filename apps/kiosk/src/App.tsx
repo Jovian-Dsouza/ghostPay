@@ -1,5 +1,5 @@
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { AppView, Transaction } from './types';
 import Layout from './components/Layout';
 import Dashboard from './components/Dashboard';
@@ -10,6 +10,7 @@ import History from './components/History';
 import { useTransactions } from './hooks/useTransactions';
 import { useBalance } from './hooks/useBalance';
 import { MERCHANT_WALLET, SKIP_ONBOARDING } from './config/shadowwire';
+import { paymentService } from './services/paymentService';
 
 const App: React.FC = () => {
   const [view, setView] = useState<AppView>(AppView.DASHBOARD);
@@ -43,6 +44,12 @@ const App: React.FC = () => {
     setView(AppView.DASHBOARD);
     setPendingAmount(0);
   }, [pendingAmount, selectedToken, addTransaction, refresh]);
+
+  useEffect(() => {
+    paymentService.setBalanceRefreshCallback(refresh);
+    return () => paymentService.setBalanceRefreshCallback(null);
+  }, [refresh]);
+
   const skipOnboarding = SKIP_ONBOARDING;
   const dontShowHeader = (view === AppView.DASHBOARD && (transactions.length === 0 && !skipOnboarding)) || view === AppView.KEYPAD || view === AppView.PAYMENT_QR || view === AppView.HISTORY;
 
