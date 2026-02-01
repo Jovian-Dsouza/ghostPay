@@ -92,11 +92,11 @@ export default function DepositPage() {
       <div className="flex justify-center gap-3 pt-4 px-4">
         <div className="flex-1 rounded-xl bg-gray-50 py-2.5 px-3 text-center">
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">ShadowWire</p>
-          <p className="text-sm font-black text-black mt-0.5">${balance.toFixed(3)}</p>
+          <p className="text-sm font-black text-black mt-0.5">${(Math.floor(balance * 1000) / 1000).toFixed(3)}</p>
         </div>
         <div className="flex-1 rounded-xl bg-gray-50 py-2.5 px-3 text-center">
           <p className="text-[9px] text-gray-400 font-bold uppercase tracking-widest">On-chain</p>
-          <p className="text-sm font-black text-black mt-0.5">${onchainBalance.toFixed(3)}</p>
+          <p className="text-sm font-black text-black mt-0.5">${(Math.floor(onchainBalance * 1000) / 1000).toFixed(3)}</p>
         </div>
       </div>
       <AmountInput onConfirm={handleConfirm} onCancel={() => navigate('/')} confirmLabel="Deposit" />

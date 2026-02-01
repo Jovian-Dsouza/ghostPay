@@ -94,7 +94,7 @@ export default function WithdrawPage() {
     <div className="h-full flex flex-col">
       <div className="text-center pt-4">
         <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest">
-          Available: ${balance.toFixed(3)}
+          Available: ${(Math.floor(balance * 1000) / 1000).toFixed(3)}
         </p>
       </div>
       <AmountInput onConfirm={handleConfirm} onCancel={() => navigate('/')} confirmLabel="Withdraw" maxAmount={balance} />

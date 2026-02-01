@@ -1,11 +1,11 @@
 export function parseErrorMessage(raw: string): string {
   const minMatch = raw.match(/Amount ([\d.]+)\s+\S+ is below minimum ([\d.]+)/);
   if (minMatch) {
-    return `Minimum transaction amount is $${parseFloat(minMatch[2]).toFixed(3)}`;
+    return `Minimum transaction amount is $${(Math.floor(parseFloat(minMatch[2]) * 1000) / 1000).toFixed(3)}`;
   }
   const maxMatch = raw.match(/exceeds maximum ([\d.]+)/i);
   if (maxMatch) {
-    return `Maximum transaction amount is $${parseFloat(maxMatch[1]).toFixed(3)}`;
+    return `Maximum transaction amount is $${(Math.floor(parseFloat(maxMatch[1]) * 1000) / 1000).toFixed(3)}`;
   }
   if (/insufficient/i.test(raw)) {
     return 'Insufficient balance for this transaction';
