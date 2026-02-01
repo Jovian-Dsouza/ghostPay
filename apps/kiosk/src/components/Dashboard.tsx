@@ -81,7 +81,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions, onStartPayment }) =
            <h1 className="text-[44px] font-black leading-tight tracking-tighter text-black">
             <span className="text-[32px] align-top mr-0.5 opacity-30 font-bold">$</span>
             {Math.floor(totalBalance)}
-            <span className="text-[32px] opacity-50">.{(totalBalance % 1).toFixed(2).split('.')[1]}</span>
+            <span className="text-[32px] opacity-50">.{(totalBalance % 1).toFixed(3).split('.')[1]}</span>
           </h1>
         </div>
 
@@ -127,7 +127,7 @@ const Dashboard: React.FC<DashboardProps> = ({ transactions, onStartPayment }) =
               </div>
               <div className="text-right">
                 <span className="text-[14px] font-black text-black">
-                  ${tx.amount.toFixed(2)}
+                  ${(Math.floor(tx.amount * 1000) / 1000).toFixed(3)}
                 </span>
                 <div className={`text-[9px] font-black uppercase tracking-tighter mt-0 ${tx.status === 'completed' ? 'text-emerald-500' : tx.status === 'failed' ? 'text-red-400' : 'text-[#8A8A8F]'}`}>
                   {tx.status === 'completed' ? '✓ ' : ''}{tx.status}

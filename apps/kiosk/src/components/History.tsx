@@ -41,7 +41,9 @@ const History: React.FC<HistoryProps> = ({ transactions }) => {
                 <p className="text-[10px] text-[#8A8A8F] font-bold mt-0.5">{tx.timestamp.toLocaleDateString()} • {tx.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
               </div>
               <div className="text-right">
-                <span className="text-[14px] font-black text-black">${tx.amount.toFixed(2)}</span>
+                <span className="text-[14px] font-black text-black">
+                  ${(Math.floor(tx.amount * 1000) / 1000).toFixed(3)}
+                </span>
                 <div className={`text-[9px] font-black uppercase tracking-tighter mt-0 ${tx.status === 'completed' ? 'text-black opacity-30' : 'text-[#8A8A8F]'}`}>
                   {tx.status}
                 </div>

@@ -57,7 +57,9 @@ const PaymentQR: React.FC<PaymentQRProps> = ({ amount, token, onComplete, onBack
           </p>
         </div>
         <div className="flex flex-col items-center">
-          <h2 className="text-[42px] font-black text-black leading-tight tracking-tighter">${amount.toFixed(2)}</h2>
+          <h2 className="text-[42px] font-black text-black leading-tight tracking-tighter">
+            ${(Math.floor(amount * 1000) / 1000).toFixed(3)}
+          </h2>
           <div className="px-3 py-1 bg-black text-white text-[10px] font-black rounded-full uppercase tracking-widest mt-1">
             Crypto secured
           </div>
@@ -129,7 +131,7 @@ const PaymentQR: React.FC<PaymentQRProps> = ({ amount, token, onComplete, onBack
           {isSuccess && 'Transaction complete. Redirecting...'}
           {isExpired && 'Payment window expired. Please try again.'}
           {isError && (session?.errorMessage || 'An error occurred. Please try again.')}
-          {(isWaiting || isVerifying) && `Transfer ${amount.toFixed(2)} ${token}  to the terminal address.`}
+          {(isWaiting || isVerifying) && `Transfer ${(Math.floor(amount * 1000) / 1000).toFixed(3)} ${token}  to the terminal address.`}
         </p>
 
         {/* Timeout countdown */}

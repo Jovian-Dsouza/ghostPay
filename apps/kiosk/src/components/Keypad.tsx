@@ -19,7 +19,7 @@ const Keypad: React.FC<KeypadProps> = ({ onConfirm, onCancel }) => {
     setAmountStr(prev => {
       if (prev === '0' && key !== '.') return key;
       if (key === '.' && prev.includes('.')) return prev;
-      if (prev.includes('.') && prev.split('.')[1].length >= 2) return prev;
+      if (prev.includes('.') && prev.split('.')[1].length >= 3) return prev;
       return prev + key;
     });
   };
