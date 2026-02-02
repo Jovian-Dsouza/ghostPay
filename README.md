@@ -203,11 +203,21 @@ VITE_SKIP_ONBOARDING=false
 
 ## Kiosk Hardware Setup
 
-### Running on Raspberry Pi
+For complete hardware setup instructions, see **[HARDWARE.md](HARDWARE.md)** - a comprehensive guide covering:
+
+- Hardware requirements and parts list
+- Raspberry Pi OS installation and configuration
+- LCD driver installation (3.5" touchscreen)
+- X Server and Openbox setup for kiosk mode
+- Auto-start configuration
+- Production deployment
+- Troubleshooting common issues
+
+### Quick Start
 
 1. Install Raspberry Pi OS (64-bit)
-2. Install Node.js 18+ and pnpm
-3. Clone and build the project
+2. Follow the complete setup guide in [HARDWARE.md](HARDWARE.md)
+3. Clone and build ghostPay
 4. Run in kiosk mode:
 
 ```bash
@@ -223,6 +233,8 @@ npm start -- --kiosk
 - No menu bar
 - Fixed 320x480 resolution
 - Touch-optimized interface
+- Auto-start on boot
+- Offline transaction storage
 
 ---
 
